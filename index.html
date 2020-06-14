@@ -1,8 +1,14 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <style>
+        .content {
+          height: 960px;
+        }
+      </style>
   </head>
 <body>
+<div class = content>
 <canvas id="canvas" width="240" height="240"></canvas>
 <form>
     <br>
@@ -11,8 +17,8 @@
         <option value="input">human</option>
         <option value="rand">random</option>
         <option value="cpu">computer</option>
-    </select><br><br>
-    <label> O: </label>
+    </select>
+    <label>&nbsp;&nbsp;O: </label>
     <select id = "playerO" name="O">
         <option value="input">human</option>
         <option value="rand">random</option>
@@ -20,6 +26,7 @@
     </select><br><br>
     <input id="startbutton" type="button" value="New Game"></input>
 </form>
+</div>
 <script>
 //game stuff
 function TTTgame() {
