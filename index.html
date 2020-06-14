@@ -4,8 +4,8 @@
   <head>
   <style>
         html {
-            overflow: hidden;
-            width: 300px;
+            overflow-x: hidden;
+            width: fit-content;
         }
 
         body {
@@ -214,6 +214,9 @@ function mult(matrix, vector) {
 }
 
 // IO stuff
+document.addEventListener('touchmove', e => {
+    e.preventDefault();
+}, false);
 TTT = new TTTgame()
 const square = [2, 9, 4, 7, 5, 3, 6, 1, 8]
 const invsquare = [1, 7, 0, 5, 2, 4, 6, 3, 8]
