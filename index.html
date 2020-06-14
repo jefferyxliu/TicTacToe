@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  </head>
+<body>
+<canvas id="canvas" width="240" height="240"></canvas>
+<form>
+    <br>
+    <label> X: </label>
+    <select id = "playerX" name="X">
+        <option value="input">human</option>
+        <option value="rand">random</option>
+        <option value="cpu">computer</option>
+    </select><br><br>
+    <label> O: </label>
+    <select id = "playerO" name="O">
+        <option value="input">human</option>
+        <option value="rand">random</option>
+        <option value="cpu">computer</option>
+    </select><br><br>
+    <input id="startbutton" type="button" value="New Game"></input>
+</form>
+<script>
+//game stuff
+function TTTgame() {
+    this.square = [2, 9, 4, 7, 5, 3, 6, 1, 8]
+    this.X = [];
+    this.O = [];
+    this.playing = false;
+    this.turn = 0;
+    this.M1 = [[1, 1, 1, 0, 0, 0, 0, 0, 0],
+               [0, 0, 0, 1, 1, 1, 0, 0, 0],
+               [0, 0, 0, 0, 0, 0, 1, 1, 1],
+               [1, 0, 0, 1, 0, 0, 1, 0, 0],
+               [0, 1, 0, 0, 1, 0, 0, 1, 0],
+               [0, 0, 1, 0, 0, 1, 0, 0, 1],
+               [1, 0, 0, 0, 1, 0, 0, 0, 1],
+               [0, 0, 1, 0, 1, 0, 1, 0, 0]]
+
+    this.M2 = [[1, 0, 0, 1, 0, 0, 1, 0],
+               [1, 0, 0, 0, 1, 0, 0, 0],
+               [1, 0, 0, 0, 0, 1, 0, 1],
+               [0, 1, 0, 1, 0, 0, 0, 0],
+               [0, 1, 0, 0, 1, 0, 1, 1],
+               [0, 1, 0, 0, 0, 1, 0, 0],
+               [0, 0, 1, 1, 0, 0, 0, 1],
+               [0, 0, 1, 0, 1, 0, 0, 0],
+               [0, 0, 1, 0, 0, 1, 1, 0]];
+    
+    this.clear = function() {
+        this.X = [];
+        this.O = [];
+        this.turn = 0;
+    }
+    this.playX = function(n) {
+        this.X.push(n);
+    }
+    this.playO = function(n) {
+        this.O.push(n);
+    }
+    this.isBlank = function(n) {
+        return !this.X.includes(n) && !this.O.includes(n);
+    }
+    this.winner = function() {
+        if (this.X.length > 2) {
+            for (let a = 0; a < this.X.length - 2; a++) {
+                for (let b = a + 1; b < this.X.length - 1; b++) {
+                    for (let c = b + 1; c < this.X.length; c++) {
+                        if (this.X[a] + this.X[b] + this.X[c] === 15) {
+                            return "X";
+                        }          
+                    }
+                }
+            }
+        }
+        if (this.O.length > 2) {
+            for (let a = 0; a < this.O.length - 2; a++) {
+                for (let b = a + 1; b < this.O.length - 1; b++) {
+                    for (let c = b + 1; c < this.O.length; c++) {
+                        if (this.O[a] + this.O[b] + this.O[c] === 15) {
+                            return "O";
+                        }          
+                    }
+                }
+            }
+        }
+        if (this.turn === 9) {
+            return "Draw";
+        }
+        return false;
+    }
+
+    this.toVector = function(blank = 1, x = 10, o = -10) {
+        vector = [0,0,0,0,0,0,0,0,0];
+        for (let i = 0; i < 9; i++) {
+            const n = this.square[i];
+            if (this.isBlank(n)) {
+                vector[i] = blank * ( -2 * (this.turn % 2) + 1);
+            }
+            if (this.X.includes(n)) {
+                vector[i] = x;
+            }
+            if (this.O.includes(n)) {
+                vector[i] = o;
+            }
+        }
+        return vector
+    }
+    this.spaces = function() {
+        vector = []
+        for (let i = 0; i < 9; i++) {
+            const n = this.square[i];
+            if (this.isBlank(n)) {
+                vector.push(n);
+            }
+        }
+        console.log(vector)
+        return vector
+    }
+    this.calc = function(blank = 1, x = 10, o = -10) {
+        const L0 = this.toVector(blank, x, o);
+        const b = blank * ( -2 * (this.turn % 2) + 1);
+        if (this.turn === 0) {
+            return [2, 4, 5, 6, 8];
+        }
+        if (L0.toString() === [x, b, b, b, o, b, b, b, x].toString() || L0.toString() === [b, b, x, b, o, b, x, b, b].toString()) {
+            return [9, 7, 3, 1];
+        }
+        if (L0.toString() === [x, b, o, b, b, b, b, b, b].toString() || L0.toString() === [o, b, x, b, b, b, b, b, b].toString()) {
+            return [6, 8];
+        }
+        if (L0.toString() === [x, b, b, b, b, b, o, b, b].toString() || L0.toString() === [o, b, b, b, b, b, x, b, b].toString()) {
+            return [4, 8];
+        }
+        if (L0.toString() === [b, b, x, b, b, b, b, b, o].toString() || L0.toString() === [b, b, o, b, b, b, b, b, x].toString()) {
+            return [2, 6];
+        }
+        if (L0.toString() === [b, b, b, b, b, b, x, b, o].toString() || L0.toString() === [b, b, b, b, b, b, o, b, x].toString()) {
+            return [2, 6];
+        }
+        let L1 = mult(this.M1, L0);
+        let L2 = mult(this.M2, L1.map(v => v**2));
+        for (let i = 0; i < 9; i++) {
+            const n = this.square[i];
+            if (!this.isBlank(n)) {
+                L2[i] = 0
+            }
+        }
+        console.log(L2)
+        m = Math.max(...L2)
+        move = []
+        for (let i = 0; i < 9; i++) {
+            const n = this.square[i];
+            if (L2[i] === m) {
+                move.push(n)
+            }
+        }
+        return move
+    }
+}
+
+function mult(matrix, vector) {
+    let vector2 = matrix.map(x => 0)
+    for (let i = 0; i < matrix.length; i++) {
+        for (let j = 0; j < matrix[i].length; j++) {
+            vector2[i] += vector[j] * matrix[i][j];
+        }
+    }
+    return vector2
+}
+
+// IO stuff
+TTT = new TTTgame()
+const square = [2, 9, 4, 7, 5, 3, 6, 1, 8]
+const invsquare = [1, 7, 0, 5, 2, 4, 6, 3, 8]
+
+const startbutton = document.getElementById("startbutton")
+
+const canvas = document.getElementById("canvas")
+let ctx = canvas.getContext("2d");
+ctx.font = "78px system-ui"
+ctx.textAlign = "center"
+ctx.textBaseline = "middle"
+draw_cross();
+
+const playerX = document.getElementById("playerX")
+const playerO = document.getElementById("playerO")
+
+startbutton.addEventListener('click', event => {
+    TTT.playing = false;
+    TTT.clear();
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    draw_cross();
+    print_board(TTT.X, TTT.O);
+    computerTurn();
+})
+
+canvas.addEventListener('click', event => {
+    if (!TTT.winner()) {
+        const i = Math.floor(event.offsetX / canvas.width * 3);
+        const j = Math.floor(event.offsetY / canvas.height * 3);
+        const n = square[i * 3 + j]
+        if (TTT.turn % 2 === 0) {
+            if (playerX.value === "input" && TTT.isBlank(n)) {
+                TTT.playX(n);
+                TTT.turn++
+            }
+        } else {
+        if (TTT.turn % 2 === 1) {
+            if (playerO.value === "input" && TTT.isBlank(n)) {
+                TTT.playO(n);
+                TTT.turn++
+            }
+        }
+    }
+    print_board(TTT.X, TTT.O)
+    computerTurn()
+    }
+})
+
+function computerTurn() {
+    if (!TTT.winner()) {
+        if (TTT.turn % 2 === 0) {
+            if (playerX.value === "cpu" || playerX.value === "rand") {
+                if (playerX.value === "cpu") {
+                    const play = TTT.calc();
+                    TTT.playX(randChoice(play));
+                }
+                if (playerX.value === "rand") {
+                    const play = TTT.spaces();
+                    TTT.playX(randChoice(play));
+                }
+                TTT.turn++;
+                print_board(TTT.X, TTT.O);
+                if (playerO.value === "cpu" || playerO.value === "rand") {
+                    setTimeout(computerTurn, 100);
+                }
+            }
+        } else {
+        if (TTT.turn % 2 === 1) {
+            if (playerO.value === "cpu" || playerO.value === "rand") {
+                if (playerO.value === "cpu") {
+                    const play = TTT.calc();
+                    TTT.playO(randChoice(play));
+                }
+                if (playerO.value === "rand") {
+                    const play = TTT.spaces();
+                    TTT.playO(randChoice(play));
+                }
+                TTT.turn++;
+                print_board(TTT.X, TTT.O);
+                if (playerX.value === "cpu" || playerX.value === "rand") {
+                    setTimeout(computerTurn, 100);
+                }
+            }
+        }
+        }
+    }  
+}
+function randChoice(arr) {
+    return arr[Math.floor(Math.random() * arr.length)]
+}
+function draw_cross() {
+    const w = canvas.width / 3
+    const h = canvas.height / 3
+    ctx.beginPath();
+    ctx.moveTo(w, 0);
+    ctx.lineTo(w, 3 * h);
+    ctx.moveTo(2 * w, 0);
+    ctx.lineTo(2 * w, 3 * h);
+    ctx.moveTo(0, h);
+    ctx.lineTo(3 * w, h);
+    ctx.moveTo(0, 2 * h);
+    ctx.lineTo(3 * w, 2 * h);
+    ctx.stroke()
+}
+function print_board(X, O) {
+    console.log(X,O);
+    X.forEach(n => {
+        const i = invsquare[n % 9];
+        const y = i % 3;
+        const x = Math.floor(i/3) % 3;
+        console.log(x,y)
+        ctx.fillText("X", x * canvas.width / 3 + canvas.width / 6, y * canvas.height / 3 + canvas.height / 6);
+    });
+    O.forEach(n => {
+        const i = invsquare[n % 9];
+        const y = i % 3;
+        const x = Math.floor(i/3) % 3;
+        console.log(x,y)
+        ctx.fillText("O", x * canvas.width / 3 + canvas.width / 6, y * canvas.height / 3 + canvas.height / 6);
+    });
+}
+</script>
+</body>
+</html>
