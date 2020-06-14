@@ -1,25 +1,57 @@
 <!doctype html>
 <html lang="en">
+<meta name="viewport" content="height=device-height, initial-scale=1">
   <head>
+  <style>
+        .content {
+          border: 1px solid #aaa;
+          width: fit-content;
+          border-radius: 8px;
+          padding: 8px 12px;
+          background-color: #f1f4f9;
+        }
+        canvas {
+          border: 1px solid #aaa;
+          padding: 8px 8px;
+          border-radius: 8px;
+          background-color: #FFFFFF;
+        }
+        .pX {
+          float: left;
+        }
+        .pO {
+          float: right;
+        }
+        .start{
+            text-align: center;
+        }
+  </style>
   </head>
 <body>
-<div class = content>
+<div class = "content">
 <canvas id="canvas" width="240" height="240"></canvas>
 <form>
     <br>
-    <label> X: </label>
+    <div class = "pX">
+    <label>X: </label>
     <select id = "playerX" name="X">
         <option value="input">human</option>
         <option value="rand">random</option>
         <option value="cpu">computer</option>
     </select>
-    <label>&nbsp;&nbsp;O: </label>
+    </div>
+    <div class = 'pO'>
+    <label>O: </label>
     <select id = "playerO" name="O">
         <option value="input">human</option>
         <option value="rand">random</option>
         <option value="cpu">computer</option>
-    </select><br><br>
+    </select>
+    </div>
+    <br><br>
+    <div class = 'start'>
     <input id="startbutton" type="button" value="New Game"></input>
+    </div>
 </form>
 </div>
 <script>
